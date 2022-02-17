@@ -1,15 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace StatePattern
+﻿namespace StatePattern
 {
-    public class MainEntity
+    public class MainEntity : StateResolver<MainEntity>
     {
+        public MainEntity()
+        {
+            AddPropertyState<CaseContext>(x => x.IsPersonReadonly, y => y.IsWhq && y.IsHostBranch);
+            AddPropertyState<CaseContext>(x => x.IsCorporationVisible, y => y.IsLocal);
+        }
+        
+        protected override MainEntity Entity => this;
+
         public bool IsPersonReadonly { get; set; }
 
         public bool IsCorporationVisible { get; set; }
+
+        public void OnInitialized(CaseContext context)
+        {
+            ApplyStates(context);
+        }
     }
 }

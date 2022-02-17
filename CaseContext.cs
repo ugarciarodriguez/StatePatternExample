@@ -11,5 +11,7 @@ namespace StatePattern
         public bool IsWhq { get; set; }
         
         public bool IsLocal { get; set; }
+
+        public bool IsHostBranch { get; set; }
     }
 }

@@ -3,15 +3,15 @@ using StatePattern;
 
 Console.WriteLine("Application state working");
 
-CaseContext caseContext = new () { IsLocal = true, IsWhq = false };
+
+/// <summary>
+///  Async call to server
+/// </summary>
+CaseContext caseContext = new () { IsLocal = true, IsWhq = false, IsHostBranch = false };
 
 MainEntity mainEntity = new();
 
-new StateResolver<MainEntity>()
-    .AddPropertyState(x => x.IsPersonReadonly, caseContext.IsWhq)
-    .AddPropertyState(x => x.IsCorporationVisible, caseContext.IsLocal)
-    .ApplyStates(mainEntity);
-
+mainEntity.OnInitialized(caseContext);
 
 Console.WriteLine(mainEntity.IsPersonReadonly);
 Console.WriteLine(mainEntity.IsCorporationVisible);

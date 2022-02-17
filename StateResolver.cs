@@ -3,11 +3,13 @@ using System.Reflection;
 
 namespace StatePattern
 {
-    public class StateResolver<T> : IState<T>
+    public abstract class StateResolver<T>
     {
         private readonly Dictionary<string, object> _propertyStates = new();
 
-        public StateResolver<T> AddPropertyState(Expression<Func<T, object>> property, object value)
+        protected abstract T Entity { get; }
+
+        protected StateResolver<T> AddPropertyState<U>(Expression<Func<T, object>> property, Expression<Func<U, bool>> value)
         {
             MemberExpression? expression;
             
@@ -22,12 +24,17 @@ namespace StatePattern
 
             string? name = expression?.Member.Name;
 
+            if (name == null) 
+            {
+                throw new InvalidOperationException();
+            }
+            
             _propertyStates.Add(name, value);
 
             return this;
         }
 
-        public void ApplyStates(T entity)
+        protected virtual void ApplyStates<U>(U context)
         {
             foreach (var property in _propertyStates.Keys)
             {
@@ -35,9 +42,11 @@ namespace StatePattern
 
                 PropertyInfo? propertyInfo = type.GetProperty(property);
 
+                var value = ((Expression<Func<U, bool>>)_propertyStates[property]).Compile()(context);
+
                 if (propertyInfo != null)
                 {
-                    propertyInfo.SetValue(entity, _propertyStates[property]);
+                    propertyInfo.SetValue(Entity, value);
                 }
             }
         }

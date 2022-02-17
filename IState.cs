@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace StatePattern
 {
-    public interface IState<T>
+    public interface IState
     {
-        public void ApplyStates(T entity);
+        public void ApplyStates<U>(U context);
     }
 }
